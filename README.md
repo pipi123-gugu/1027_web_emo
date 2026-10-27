@@ -160,6 +160,26 @@ npm start          # node server.js，打开 http://localhost:3000
 - 进入「🖼️ 图片」模式，点 6 张示例缩略图中的任意一张即可识别；
 - 也可用参数直达：`?demo=joy|sad|anger|surprise|fear|calm`。
 
+### 部署到 GitHub Pages
+
+仓库已内置 `.github/workflows/deploy.yml`：推到 `main` 就自动构建并发布。
+
+```bash
+# 首次：创建仓库后
+git remote add origin https://github.com/<你的用户名>/<仓库名>.git
+git push -u origin main
+```
+
+然后在仓库的 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**，
+推送后 Actions 跑完即可访问 `https://<用户名>.github.io/<仓库名>/`。
+
+构建时用 `VITE_BASE=./` 生成**相对路径**，所以部署在 `/<仓库名>/` 子路径下
+（Vite 默认的 `/assets/...` 绝对路径在这里会 404）。本地构建不受影响，仍是根路径。
+
+> ⚠️ GitHub Pages 只能托管静态文件，**没有 Node 服务，`/api` 代理不可用**，
+> 因此线上只提供 9 首可离线播放的本地曲库，界面会提示「当前是静态托管」。
+> 想要在线歌曲，请用 `npm start`（`server.js`）部署到任意支持 Node 的主机。
+
 ---
 
 ## 六、接口说明

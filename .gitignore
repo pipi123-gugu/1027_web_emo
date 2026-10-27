@@ -1,0 +1,19 @@
+# 依赖与构建产物
+node_modules/
+dist/
+.vite/
+
+# 单文件版模板（本地生成用，不属于站点源码）
+standalone-template.html
+
+# 环境与日志
+.env
+.env.local
+*.log
+npm-debug.log*
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

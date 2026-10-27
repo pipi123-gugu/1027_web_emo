@@ -1,0 +1,21 @@
+{
+  "name": "face-music-recommender",
+  "version": "1.0.0",
+  "description": "基于人脸情绪识别的歌曲推荐系统 (Vue3 + face-api.js 本地推理 + 网易云音乐在线API)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "start": "node server.js",
+    "serve": "npm run build && node server.js"
+  },
+  "dependencies": {
+    "face-api.js": "^0.22.2",
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.0"
+  }
+}

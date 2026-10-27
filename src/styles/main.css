@@ -1,0 +1,72 @@
+/* =========================================================================
+   全局样式与设计变量
+   -------------------------------------------------------------------------
+   --accent 系列由 App.vue 根据当前识别到的情绪动态改写，
+   整个界面（logo、按钮、进度条、光晕）会随情绪变色。
+   ========================================================================= */
+:root {
+  --accent: #2ecc71;
+  --accent-deep: #1f8f5a;
+  --accent-soft: rgba(46, 204, 113, 0.15);
+
+  --bg: #f5faf7;
+  --panel: #ffffff;
+  --ink: #12271d;
+  --muted: #7d9a8c;
+  --line: #e4f0e9;
+
+  --radius: 20px;
+  --shadow: 0 10px 28px rgba(18, 80, 52, 0.07);
+  --shadow-lg: 0 22px 54px rgba(18, 80, 52, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(900px 520px at 8% -8%, var(--accent-soft), transparent 62%),
+    radial-gradient(760px 460px at 100% 0%, rgba(206, 234, 255, 0.55), transparent 60%),
+    linear-gradient(180deg, #f7fcf9 0%, var(--bg) 45%, #eef6f3 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+#app { min-height: 100vh; }
+
+/* 面板 */
+.card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow), 0 0 0 1px rgba(20, 70, 45, 0.04);
+}
+
+button { font-family: inherit; }
+
+/* 统一的键盘焦点样式（无障碍） */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #d5e8de; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #c3dccf; }
+
+/* 尊重系统的「减少动态效果」设置 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

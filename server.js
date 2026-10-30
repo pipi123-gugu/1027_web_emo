@@ -57,15 +57,33 @@ function serveStatic(req, res, url) {
 
   const ext = extname(file).toLowerCase()
   const stat = statSync(file)
+
+  // ETag：用「体积 + 修改时间（秒）」拼一个弱校验值。
+  // 有了它，no-cache 的静态资源只是多一次 304 空响应，几乎不耗流量。
+  const etag = `W/"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs / 1000).toString(16)}"`
+  const inm = req.headers['if-none-match']
+  res.setHeader('ETag', etag)
+
   res.setHeader('Content-Type', MIME[ext] || 'application/octet-stream')
   res.setHeader('X-Content-Type-Options', 'nosniff')
 
   if (rel.startsWith('/assets/')) {
+    // 文件名里带内容 hash，内容一变文件名就变，可以放心长缓存
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
   } else if (ext === '.html') {
     res.setHeader('Cache-Control', 'no-cache')
   } else {
-    res.setHeader('Cache-Control', 'public, max-age=86400')
+    // 示例图 / 模型 / 音频这类文件名固定不变的资源：
+    // 之前给的是 max-age=86400，换图后用户的浏览器会拿着旧图缓存 24 小时不回来问，
+    // 表现为「服务端已更新但页面没变」。改成 no-cache（每次带 ETag 校验），
+    // 内容没变是 304，内容变了立刻拿到新文件。
+    res.setHeader('Cache-Control', 'no-cache')
+  }
+
+  // 协商缓存命中：直接 304，不传 body
+  if (inm && inm === etag) {
+    res.statusCode = 304
+    return res.end()
   }
 
   const acceptsGzip = /\bgzip\b/.test(req.headers['accept-encoding'] || '')

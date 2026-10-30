@@ -10,7 +10,7 @@ import { useHistory } from './composables/useHistory.js'
 import { EMOTIONS } from './utils/emotionMap.js'
 import { toggle, next, prev, player } from './composables/usePlayer.js'
 
-const { songs, recommending, onlineError, usedOnline, advice, recommendFor } = useRecommend()
+const { songs, recommending, onlineError, usedOnline, onlineVia, advice, recommendFor } = useRecommend()
 const { history, pushHistory, clearHistory } = useHistory()
 
 const result = ref(null)
@@ -101,8 +101,8 @@ onBeforeUnmount(() => {
         </div>
       </div>
       <div class="pills">
-        <span class="pill" :class="{ on: usedOnline }">
-          {{ usedOnline ? '在线曲库已接入' : '本地曲库模式' }}
+        <span class="pill" :class="{ on: usedOnline }" :title="usedOnline && onlineVia === 'public' ? '静态托管没有自己的代理，在线歌曲来自公共接口' : ''">
+          {{ usedOnline ? (onlineVia === 'public' ? '在线曲库 · 公共接口' : '在线曲库已接入') : '本地曲库模式' }}
         </span>
         <span class="pill ghost">face-api.js 本地推理</span>
       </div>

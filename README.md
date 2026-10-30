@@ -154,7 +154,7 @@ npm start          # node server.js，打开 http://localhost:3000
 在线歌曲在生产环境同样可用。部署到云主机时设置环境变量 `PORT` 即可。
 
 > ⚠️ **摄像头 / 拍照**需要安全上下文：`localhost` 或 `https`。直接双击 `index.html`（file://）无法使用摄像头。
-> 若只做静态托管且不跑 `server.js`，在线歌曲会因 CORS 失败而自动回退到本地曲库，其余功能正常。
+> 若只做静态托管且不跑 `server.js`，在线歌曲会自动走公共接口兜底（见下文 GitHub Pages 一节）。
 
 ### 一键演示
 - 进入「🖼️ 图片」模式，点 6 张示例缩略图中的任意一张即可识别；
@@ -176,9 +176,23 @@ git push -u origin main
 构建时用 `VITE_BASE=./` 生成**相对路径**，所以部署在 `/<仓库名>/` 子路径下
 （Vite 默认的 `/assets/...` 绝对路径在这里会 404）。本地构建不受影响，仍是根路径。
 
-> ⚠️ GitHub Pages 只能托管静态文件，**没有 Node 服务，`/api` 代理不可用**，
-> 因此线上只提供 9 首可离线播放的本地曲库，界面会提示「当前是静态托管」。
-> 想要在线歌曲，请用 `npm start`（`server.js`）部署到任意支持 Node 的主机。
+> ⚠️ GitHub Pages 只能托管静态文件，**没有 Node 服务，本项目自己的 `/api` 代理不可用**：
+> 前端请求 `/api/music` 会打到 `https://<用户名>.github.io/api/music` 并拿到 404。
+>
+> 为了不让静态版变成「只有 9 首本地歌」，`src/utils/onlineApi.js` 里做了一条兜底链路：
+>
+> 1. 先请求本项目代理 `/api/music`（有 `server.js` 时走这条，功能最完整）；
+> 2. 代理不存在或异常时，直连第三方公开接口 `api.vkeys.cn` 搜索网易云歌曲；
+> 3. 播放用网易云官方 outer url `https://music.163.com/song/media/outer/url?id=<id>.mp3`，
+>    `<audio>` 不需要 CORS，所以纯静态也能放；
+> 4. 两条都失败才回退到 9 首本地曲库。
+>
+> 兜底生效时，页面右上角会显示「在线曲库 · 公共接口」。这条通道的已知限制：
+> 依赖第三方服务可用性、接口不返回时长（列表显示 `--:--`）、VIP/下架歌曲播放会失败并自动跳过。
+>
+> 想彻底不依赖第三方，可以把 `server/api.js` 的代理部署到免费 Serverless
+> （Cloudflare Workers / Vercel Functions），再把前端 `fetch('/api/music')` 换成你的函数地址；
+> 或者在 `src/utils/onlineApi.js` 里把 `PUBLIC_FALLBACK` 设为 `false`，退回纯本地曲库行为。
 
 ---
 

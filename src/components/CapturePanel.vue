@@ -8,6 +8,9 @@ const emit = defineEmits(['detected'])
 // 一键演示用示例人脸（已生成到 public/demos/，覆盖 6 种情绪）
 // 用 BASE_URL 拼路径，保证部署到 GitHub Pages 子路径时也能取到图
 const BASE = import.meta.env.BASE_URL
+// 提示：恐惧那张换成了「胸腔以上、张嘴惊叫」的构图——太近的特写虽然人眼一看就是恐惧，
+// 但 TinyFaceDetector 只能框到眉眼到嘴，且表情网在 320/224 尺度会翻成「惊讶」。
+// 现在这张在 416/320/224 三个尺度下都稳定输出 fearful。
 const DEMOS = EMOTION_KEYS.map((k) => ({
   key: k,
   label: EMOTIONS[k].label,
